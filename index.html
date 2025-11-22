@@ -88,7 +88,7 @@
             width: 100%;
             position: relative;
             
-            /* ▼▼▼ ここを修正 ▼▼▼ */
+            /* ▼▼▼ デフォルト（PC/タブレット横向き）の画像設定 ▼▼▼ */
             /* 画像ファイルを指定 */
             background-image: url('img/kv.webp'); 
             
@@ -98,15 +98,10 @@
             /* 画面の中央に配置 */
             background-position: center;
             
-            /* 画像のサイズ調整 
-               cover  = 画面いっぱいに引き伸ばす（端が切れる可能性あり）
-               contain = 画像全体が収まる最大サイズ（余白ができる）
-               数値を指定 = 横幅を画面の80%などにする
-            */
-            background-size: 100% auto; /* スマホでも見やすいように横幅80%に設定 */
+            /* 画像のサイズ調整 */
+            background-size: 100% auto; 
             
-            /* 背景色（画像の余白部分の色）
-               画像の背景がグレー(#e8e8e8)に近いようなので合わせます */
+            /* 背景色（画像の余白部分の色）*/
             background-color: #e8e8e8; 
         }
         
@@ -194,14 +189,30 @@
             margin-top: 20px;
         }
 
-        /* --- スマホ向け調整 --- */
+        /* --- スマホ向け調整 (ナビゲーション非表示など) --- */
         @media (max-width: 768px) {
             header { padding: 20px; }
             .nav-menu { display: none; } 
             section:not(.hero) { padding: 60px 20px; }
         }
-
         
+        /* --- Hero Section (画像表示エリア) のスマートフォン縦画面向け調整 (追加部分) --- */
+        /* スマートフォン（幅768px以下）で、ビューポートが縦長の場合に適用 */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .hero {
+                /* ▼▼▼ スマートフォン（縦長）用の画像をここで指定 ▼▼▼ */
+                background-image: url('img/kv-sp.webp');
+                
+                /* 画像の表示サイズを調整 */
+                background-size: contain; 
+                
+                /* 画像を上端に寄せて表示 */
+                background-position: center top; 
+                
+                /* 画像が表示されない余白部分の背景色を設定 */
+                background-color: #e8e8e8;
+            }
+        }
     </style>
 </head>
 <body>
