@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONTACT - Oshiribeat</title>
+    <style>
+        /* --- 基本設定 (共通) --- */
+        :root {
+            --bg-color: #e8e8e8; 
+            --text-color: #111;
+            --accent-color: #aaff00; 
+            --sub-text: #666;
+            --border-color: #ccc;
+            --input-bg: #fff;
+            --font-main: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            font-weight: bold;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        a:hover { color: var(--accent-color); }
+
+        /* --- Header (共通) --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: whitesmoke;
+            z-index: 1000;
+        }
+
+        .logo { 
+            font-size: 24px; 
+            font-weight: 900; 
+            letter-spacing: 1px; 
+            color: #000;
+        }
+        
+        .nav-menu { display: flex; gap: 30px; list-style: none; }
+        .nav-menu li { font-size: 14px; letter-spacing: 1px; }
+        .nav-menu li a { color: #000; }
+        .nav-menu li a:hover { color: var(--accent-color); }
+
+        /* --- Page Content --- */
+        main {
+            padding-top: 100px;
+            padding-bottom: 80px;
+            max-width: 800px; 
+            margin: 0 auto;
+            width: 90%;
+        }
+
+        /* Page Title */
+        .page-header {
+            margin-bottom: 60px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 64px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .contact-lead {
+            margin-bottom: 40px;
+            font-weight: normal;
+            font-size: 16px;
+        }
+
+        /* --- Email Direct Display Styles --- */
+        .contact-address-container {
+            text-align: center;
+            margin-top: 40px;
+            padding: 60px 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            /* 少し浮いているような演出 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .email-label {
+            font-size: 12px;
+            color: var(--sub-text);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .email-link {
+            font-size: clamp(20px, 5vw, 40px); /* スマホ〜PCで可変 */
+            font-weight: 900;
+            color: #111;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 5px;
+            word-break: break-all; /* 長いアドレスの折り返し */
+            display: inline-block;
+        }
+
+        .email-link:hover {
+            color: var(--accent-color);
+            border-bottom-color: #111;
+        }
+
+        .address-note {
+            margin-top: 40px;
+            font-size: 13px;
+            color: var(--sub-text);
+            font-weight: normal;
+            line-height: 1.8;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #111;
+            color: #fff;
+            padding: 60px 40px;
+            font-size: 12px;
+            margin-top: 60px; 
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 20px; }
+            .nav-menu { display: none; }
+            .page-title { font-size: 40px; }
+            main { padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Oshiribeat</div>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="index.html">TOP</a></li>
+                <li><a href="#">NEWS</a></li>
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="member.html">MEMBER</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h1 class="page-title">Contact</h1>
+        </section>
+
+        <p class="contact-lead">
+            楽曲制作、出演依頼、スポンサーシップ、その他のお問い合わせは<br>
+            以下のメールアドレスまで直接ご連絡ください。
+        </p>
+
+        <!-- メールアドレス表示エリア -->
+        <div class="contact-address-container">
+            <p class="email-label">E-mail Address</p>
+            <a href="mailto:oshiribeat@gmail.com" class="email-link">
+                oshiribeat@gmail.com
+            </a>
+            <div class="address-note">
+                <p>※内容を確認後、担当者よりご連絡させていただきます。</p>
+                <p>※返信にお時間をいただく場合がございます。あらかじめご了承ください。</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        &copy; 2025 Oshiribeat. All rights reserved.
+    </footer>
+
+</body>
+</html>
