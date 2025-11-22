@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEWS - Oshiribeat</title>
+    <style>
+        /* --- 基本設定 (index.htmlのスタイルを継承) --- */
+        :root {
+            --bg-color: #e8e8e8; 
+            --text-color: #111;
+            --accent-color: #aaff00; 
+            
+            --card-bg: #f9f9f9;     /* ニュースカード背景色 */
+            --font-main: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            font-weight: bold;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.3s, border-color 0.3s; }
+        a:hover { color: var(--accent-color); }
+
+        ul { list-style: none; }
+
+        /* --- Header (index.htmlのデザインに合わせる) --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: whitesmoke; 
+            z-index: 1000;
+            border-bottom: none;
+        }
+
+        .logo { 
+            font-size: 24px; 
+            font-weight: 900; 
+            letter-spacing: 1px; 
+            color: #000;
+        }
+        
+        .nav-menu { display: flex; gap: 30px; list-style: none; }
+        .nav-menu li { font-size: 14px; letter-spacing: 1px; }
+        .nav-menu li a { color: #000; }
+        .nav-menu li a:hover { color: var(--accent-color); }
+
+        /* --- ハンバーガーアイコン (member.html/index.htmlのスタイルを継承) --- */
+        .menu-toggle {
+            display: none; 
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001;
+        }
+
+        .hamburger-icon {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: #000;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .hamburger-icon::before,
+        .hamburger-icon::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #000;
+            position: absolute;
+            transition: transform 0.3s, top 0.3s;
+        }
+
+        .hamburger-icon::before { top: -8px; }
+        .hamburger-icon::after { top: 8px; }
+
+        .menu-toggle[aria-expanded="true"] .hamburger-icon {
+            transform: rotate(45deg);
+            background: transparent;
+        }
+
+        .menu-toggle[aria-expanded="true"] .hamburger-icon::before {
+            transform: rotate(90deg);
+            top: 0;
+        }
+
+        .menu-toggle[aria-expanded="true"] .hamburger-icon::after {
+            transform: rotate(0deg);
+            top: 0;
+        }
+
+        /* --- Page Title (member.htmlのスタイルを継承) --- */
+        .page-header {
+            padding: 100px 40px 20px; 
+            border-bottom: 1px solid #ccc;
+            background-color: #fff; /* ページヘッダーの背景を白に */
+        }
+
+        .page-title {
+            font-size: 48px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        /* --- News Section --- */
+        .news-section {
+            padding: 40px;
+            background-color: #fff;
+        }
+        
+        /* ニュース記事一覧のグリッド */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px; /* member.htmlに合わせた間隔 */
+        }
+
+        /* ニュースカードのスタイル (index.htmlの.topic-cardとmember.htmlのカードデザインを統合) */
+        .news-card {
+            background: var(--card-bg);
+            border: 1px solid #ddd;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer; /* クリックできることを示す */
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .card-image {
+            width: 100%;
+            aspect-ratio: 4 / 3; /* 画像のアスペクト比を少し横長に */
+            overflow: hidden;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        /* カード内の画像表示調整 */
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .news-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+        
+        .date {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+            display: block;
+            font-weight: normal;
+        }
+
+        .tags {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: bold;
+        }
+
+        .card-title {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #000;
+            margin-bottom: 0;
+        }
+
+        /* --- Footer (index.htmlのスタイルを継承) --- */
+        footer {
+            background: #111;
+            color: #fff;
+            padding: 60px 40px;
+            border-top: none;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+        }
+        
+        .copyright {
+            color: #888;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        /* --- Modal Styles (member.htmlから継承) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border-radius: 4px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .modal-date {
+            font-size: 14px;
+            color: #888;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-tags {
+            font-size: 14px;
+            color: #666;
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            line-height: 1.3;
+            color: #000;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .modal-img-box {
+            flex: 1 1 300px;
+        }
+
+        .modal-img-box img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+        }
+        .modal-img-box .no-image {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             height: 200px;
+             background-color: #eee;
+             color: #999;
+             font-size: 14px;
+             font-weight: normal;
+        }
+
+        .modal-text-box {
+            flex: 1 1 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-description {
+            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap; /* 改行を反映 */
+            font-weight: normal;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            line-height: 1;
+            color: #888;
+        }
+        .modal-close:hover {
+            color: var(--accent-color);
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+
+        /* --- スマホ向け調整 (member.html/index.htmlのスタイルを継承) --- */
+        @media (max-width: 768px) {
+            header { padding: 20px; }
+
+            /* ハンバーガーアイコンを表示 */
+            .menu-toggle {
+                display: block;
+                margin-left: auto; 
+            }
+
+            .page-title { font-size: 32px; }
+            .news-section { padding: 20px; }
+            
+            /* ニュース記事一覧を2カラム表示にする */
+            .news-grid { 
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px; 
+            }
+            
+            /* メニュー本体の設定 */
+            .nav-menu {
+                display: flex;
+                flex-direction: column;
+                position: fixed; 
+                top: 80px; 
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 80px); 
+                background: #fff; 
+                transform: translateX(100%); 
+                transition: transform 0.3s ease-out;
+                overflow-y: auto; 
+                z-index: 999;
+            }
+
+            .nav-menu.is-open {
+                transform: translateX(0);
+            }
+
+            .nav-menu li {
+                margin-left: 0;
+                padding: 15px 20px;
+                border-bottom: 1px solid #eee;
+                width: 100%;
+            }
+
+            /* Modal Mobile */
+            .modal-content { padding: 20px; }
+            .modal-header { margin-bottom: 10px; }
+            .modal-title { font-size: 24px; }
+            .modal-body { flex-direction: column; gap: 20px; }
+            .modal-description { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="img/logo.png" alt="Oshiribeat ロゴ" style="height:40px; vertical-align:middle;">
+        
+        <button class="menu-toggle" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="hamburger-icon"></span>
+        </button>
+
+        <nav>
+            <ul class="nav-menu" id="primary-navigation">
+                <li><a href="index.html">TOP</a></li>
+                <li><a href="news.html">NEWS</a></li>
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="member.html">MEMBER</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="page-header">
+        <h1 class="page-title">NEWS</h1>
+    </section>
+
+    <section class="news-section">
+        <div class="news-grid">
+
+
+
+<article class="news-card" data-description=
+
+"ComposerとしてRaimukunが加入しました。
+
+新メンバーを迎えたOshiribeatをこれからもよろしくお願いいたします。">
+                <div class="card-image"><img src="img/G46ZvDJb0AAlD2W.jpg" alt="sixtar gate"></div>
+                <div class="card-content" >
+                    <span class="date">2025.11.04</span>
+                    <span class="tags">#INFO #加入</span>
+                    <h3 class="card-title">OshiribeatにRaimukunが加入</h3>
+                    </h3>
+                </div>
+            </article>
+
+
+
+
+<article class="news-card" data-description=
+
+"2025 秋M3
+
+Oshiribeat 新作アルバム
+
+Multi Flavor 4とArtifact を同時リリース！
+
+第二展示場 1F え 37で頒布予定">
+                <div class="card-image"><img src="img/G3nmhgiW4AArOxJ.jpg" alt="sixtar gate"></div>
+                <div class="card-content" >
+                    <span class="date">2025.10.19</span>
+                    <span class="tags">#INFO #M3</span>
+                    <h3 class="card-title">2025年秋M3でMulti Flavor 4とArtifactを頒布</h3>
+                    </h3>
+                </div>
+            </article>
+
+
+
+<article class="news-card" data-description=
+
+"Oshiribeat初の海外公演
+
+OSR in Seoul 開催決定
+
+ゲストに「TAK」「SANY-ON」「NeLiME」をお招きし、OSRからも豪華メンバーが日韓から参加。飛行チケット取るなら今✈️
+
+🗺️Sinchon 1nfinity Club
+📅8/10 17:00~22:00（予定）
+🎫25,000KRW">
+                <div class="card-image"><img src="img/GphuDIYbUAAGIGh.jpg" alt="sixtar gate"></div>
+                <div class="card-content" >
+                    <span class="date">2025.04.27</span>
+                    <span class="tags">#INFO #EVENT</span>
+                    <h3 class="card-title">Oshiribeat初の海外公演 OSR in Seoul 開催決定</h3>
+                    </h3>
+                </div>
+            </article>
+
+
+
+
+            <article class="news-card" data-description=
+
+"2024 秋M3
+
+Oshiribeat 新作アルバム
+
+Multi Flavor 3⚡️
+
+第二展示場 2F シ 26で頒布予定">
+                <div class="card-image"><img src="img/GaU08JQbcAECj9M.jpg" alt="sixtar gate"></div>
+                <div class="card-content" >
+                    <span class="date">2024.10.20</span>
+                    <span class="tags">#INFO #M3</span>
+                    <h3 class="card-title">2024年秋M3でMulti Flavor 3を頒布</h3>
+                    </h3>
+                </div>
+            </article>
+
+
+
+<article class="news-card" data-description=
+
+"ComposerとしてA-byssとCHUYOが加入しました。
+
+新メンバーを迎えたOshiribeatをこれからもよろしくお願いいたします。">
+                <div class="card-image"><img src="img/GSW_CB7WMAAhLtV.jpg" alt="sixtar gate"></div>
+                <div class="card-content" >
+                    <span class="date">2024.04.20</span>
+                    <span class="tags">#INFO #加入</span>
+                    <h3 class="card-title">OshiribeatにA-byssとCHUYOが加入</h3>
+                    </h3>
+                </div>
+            </article>
+
+
+
+
+
+
+ <article class="news-card" data-description=
+
+"今回のM3は #fffff Records様と共同出展いたします。
+
+よろしくお願いいたします。
+
+サ-24bでお会いしましょう。">
+                <div class="card-image"><img src="img/GLmrKWKakAAGdaG.jpg" alt="sixtar gate"></div>
+                <div class="card-content" >
+                    <span class="date">2024.04.20</span>
+                    <span class="tags">#INFO #M3</span>
+                    <h3 class="card-title">2024年春M3 #ffffff Records様と共同出展</h3>
+                </div>
+            </article>
+
+ 
+    
+            <article class="news-card" data-description="惑星を巡る宇宙航海を題材とした韓国のリズムゲーム「Sixtar Gate: Startrail 」と「Oshiribeat」のコラボレーションが実現
+
+対象楽曲は以下。
+・Roy Mikelate (feat. ATAS) - Bossfire
+・Essbee - OMOIDE
+・Plastic Fruits - Le Petit Princess
+・MASEraaaN - Diosa maquinaria
+・Essbee - SPECTRUM
+・K-forest - Sanity
+・mybear - SLECTA">
+                <div class="card-image"><img src="img/sixtar.png" alt="sixtar gate"></div>
+                <div class="card-content" >
+                    <span class="date">2023.12.13</span>
+                    <span class="tags">#RELEASE #MUSIC #COLLAB</span>
+                    <h3 class="card-title">Sixtar Gate: Startrail Oshiribeatコラボ発売!</h3>
+                </div>
+            </article>
+
+
+
+            <article class="news-card" data-description="中国の動画共有サービス、bilibili動画発のプロジェクト
+「Pigeon Games」と「Oshiribeat」のコラボレーションが実現。
+
+対象楽曲は以下。
+・K-forest - Break Over
+・Plastic Fruits - El Condor Pasa (Phigros Edit)">
+               <div class="card-image"><img src="img/phigros.png" alt="sixtar gate"></div>
+                <div class="card-content">
+                    <span class="date">2022.11.18</span>
+                    <span class="tags">#RELEASE #MUSIC #COLLAB</span>
+                    <h3 class="card-title">Phigros Oshiribeatコラボ発表！</h3>
+                </div>
+            </article>
+
+         
+            
+        </div>
+    </section>
+
+    <div id="news-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-header">
+                <span id="modal-date" class="modal-date"></span>
+                <span id="modal-tags" class="modal-tags"></span>
+                <h2 id="modal-title" class="modal-title"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-img-box">
+                    <div id="modal-img-placeholder"></div>
+                </div>
+                <div class="modal-text-box">
+                    <p id="modal-desc" class="modal-description"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-links">
+            <a href="contact.html">CONTACT US</a>
+        </div>
+        <div class="copyright">
+            &copy; 2025 Oshiribeat. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('#primary-navigation');
+
+            // ハンバーガーメニューの開閉
+            menuToggle.addEventListener('click', () => {
+                const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
+                menuToggle.setAttribute('aria-expanded', !isExpanded);
+                navMenu.classList.toggle('is-open');
+            });
+            
+            // --- モーダル関連の処理 ---
+            const modal = document.getElementById('news-modal');
+            const modalDate = document.getElementById('modal-date');
+            const modalTags = document.getElementById('modal-tags');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDesc = document.getElementById('modal-desc');
+            const modalImgPlaceholder = document.getElementById('modal-img-placeholder');
+            const closeBtn = document.querySelector('.modal-close');
+            const cards = document.querySelectorAll('.news-card');
+
+            // 閉じる処理
+            const closeModal = () => {
+                modal.classList.remove('active');
+                document.body.classList.remove('modal-open');
+            };
+
+            // カードクリック時の処理
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const dateText = card.querySelector('.date').textContent;
+                    const tagsText = card.querySelector('.tags').textContent;
+                    const titleText = card.querySelector('.card-title').textContent;
+                    const descText = card.getAttribute('data-description') || '詳細情報はありません。';
+                    const imgElement = card.querySelector('.card-image img'); // imgタグがあるか確認
+                    const hasImage = imgElement && imgElement.src.includes('noimage.webp') === false;
+                    const imgSrc = imgElement ? imgElement.src : null;
+
+                    // モーダルコンテンツを設定
+                    modalDate.textContent = dateText;
+                    modalTags.textContent = tagsText;
+                    modalTitle.textContent = titleText;
+                    modalDesc.textContent = descText;
+                    
+                    // 画像の処理
+                    modalImgPlaceholder.innerHTML = ''; // 一旦クリア
+                    if (hasImage && imgSrc) {
+                         const img = document.createElement('img');
+                         img.src = imgSrc;
+                         img.alt = titleText + " イメージ";
+                         modalImgPlaceholder.appendChild(img);
+                    } else {
+                         modalImgPlaceholder.innerHTML = '<div class="no-image">No Image Available</div>';
+                    }
+
+
+                    // モーダル表示
+                    modal.classList.add('active');
+                    document.body.classList.add('modal-open');
+                });
+            });
+
+            // 閉じるボタンで閉じる
+            closeBtn.addEventListener('click', closeModal);
+
+            // モーダル背景クリックで閉じる
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
