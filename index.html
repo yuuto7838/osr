@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oshiribeat</title>
+    <style>
+        /* --- 基本設定 --- */
+        :root {
+            /* 画像の背景色に合わせる */
+            --bg-color: #e8e8e8;
+            --text-color: #111;
+            /* 画像のアクセントカラー */
+            --accent-color: #aaff00;
+            --font-main: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            font-weight: bold;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between; /* ロゴとメニュー/トグルを両端に寄せる */
+            align-items: center;
+            /* 背景を透明にして画像を活かす */
+            background: whitesmoke;
+            z-index: 1000;
+            /* ボーダーも削除 */
+            border-bottom: none;
+        }
+
+        .logo {
+            font-size: 24px;
+            letter-spacing: 2px;
+            font-weight: 900;
+            /* ロゴ色を黒に */
+            color: #000;
+        }
+
+        .nav-menu {
+            display: flex;
+            /* PC表示では幅は自動 */
+        }
+
+        .nav-menu li {
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-left: 30px; /* PCでの項目間の間隔 */
+        }
+
+        .nav-menu li a {
+            /* ナビゲーションの文字色を黒に */
+            color: #000;
+        }
+        
+        /* --- ハンバーガーアイコン (PCでは非表示) --- */
+        .menu-toggle {
+            display: none; /* デフォルトで非表示 */
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001; /* ヘッダーより上に配置 */
+        }
+
+        .hamburger-icon {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: #000;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .hamburger-icon::before,
+        .hamburger-icon::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #000;
+            position: absolute;
+            transition: transform 0.3s, top 0.3s;
+        }
+
+        .hamburger-icon::before {
+            top: -8px;
+        }
+
+        .hamburger-icon::after {
+            top: 8px;
+        }
+
+        /* メニュー開閉時のアイコンアニメーション */
+        .menu-toggle[aria-expanded="true"] .hamburger-icon {
+            transform: rotate(45deg);
+            background: transparent;
+        }
+
+        .menu-toggle[aria-expanded="true"] .hamburger-icon::before {
+            transform: rotate(90deg);
+            top: 0;
+        }
+
+        .menu-toggle[aria-expanded="true"] .hamburger-icon::after {
+            transform: rotate(0deg);
+            top: 0;
+        }
+
+
+       /* --- Hero Section (画像表示エリア) --- */
+        .hero {
+            height: 100vh; /* 画面いっぱいの高さ */
+            width: 100%;
+            position: relative;
+            
+            /* ▼▼▼ デフォルト（PC/タブレット横向き）の画像設定 ▼▼▼ */
+            /* 画像ファイルを指定 */
+            background-image: url('img/kv.webp');
+            
+            /* 画像を繰り返し表示しない */
+            background-repeat: no-repeat;
+            
+            /* 画面の中央に配置 */
+            background-position: center;
+            
+            /* 画像のサイズ調整 */
+            background-size: 100% auto;
+            
+            /* 背景色（画像の余白部分の色）*/
+            background-color: #e8e8e8;
+        }
+        
+        /* --- Section 共通 --- */
+        section:not(.hero) {
+            padding: 80px 40px;
+            background-color: #fff; /* コンテンツエリアの背景を白に */
+        }
+
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 40px;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            text-transform: uppercase;
+            color: #000;
+        }
+
+        /* --- Topics (News) --- */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .topic-card {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 0;
+            transition: transform 0.3s;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .tags {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #000;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #111;
+            color: #fff;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+        }
+
+        .copyright {
+            color: #888;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        /* --- スマホ向け調整 (ハンバーガーメニューを有効化) --- */
+        @media (max-width: 768px) {
+            
+            header { 
+                padding: 20px;
+            }
+            
+            /* ハンバーガーアイコンを表示 */
+            .menu-toggle {
+                display: block;
+                /* ▼▼▼ 追加: これでボタンを右端に寄せます ▼▼▼ */
+                margin-left: auto; 
+            }
+            
+            section:not(.hero) { padding: 60px 20px; }
+
+            /* PC表示用の li のマージンをリセットし、SPメニュー用の見た目を設定 */
+            .nav-menu li {
+                margin-left: 0; /* マージンをリセット */
+                padding: 15px 20px;
+                border-bottom: 1px solid #eee;
+                width: 100%; /* メニューアイテムを全幅にする */
+            }
+            
+            /* ナビゲーションメニュー本体の設定 */
+            .nav-menu {
+                display: flex;
+                flex-direction: column;
+                position: fixed; /* 画面に固定 */
+                top: 80px; /* ヘッダーの高さ (20px*2 + 40px) の下から表示 */
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 80px); /* ヘッダーの下から画面いっぱい */
+                background: #fff; /* メニューの背景色 */
+                transform: translateX(100%); /* 画面外に隠す（右端） */
+                transition: transform 0.3s ease-out;
+                overflow-y: auto; /* メニューが多い場合にスクロール可能にする */
+                z-index: 999;
+                
+            }
+
+            /* JavaScriptで付与されるクラス。メニューを表示する（画面内にスライドイン） */
+            .nav-menu.is-open {
+                transform: translateX(0);
+            }
+            
+            
+        }
+        
+        /* --- Hero Section (画像表示エリア) のスマートフォン縦画面向け調整 (追加部分) --- */
+        /* スマートフォン（幅768px以下）で、ビューポートが縦長の場合に適用 */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .hero {
+                /* ▼▼▼ スマートフォン（縦長）用の画像をここで指定 ▼▼▼ */
+                background-image: url('img/kv-sp.webp');
+                
+                /* 画像の表示サイズを調整 */
+                background-size: contain;
+                
+                /* 画像を上端に寄せて表示 */
+                background-position: center top;
+                
+                /* 画像が表示されない余白部分の背景色を設定 */
+                background-color: #e8e8e8;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="img/logo.png" alt="Oshiribeat ロゴ" style="height:40px; vertical-align:middle;">
+        </div>
+        
+        <button class="menu-toggle" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="hamburger-icon"></span>
+        </button>
+
+        <nav>
+            <ul class="nav-menu" id="primary-navigation">
+                <li><a href="index.html">TOP</a></li>
+                <li><a href="news.html">NEWS</a></li>
+                <li><a href="about.html">ABOUT</a></li>
+                <li><a href="member.html">MEMBER</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            </section>
+
+        <section id="news">
+            <h2 class="section-title">Latest News</h2>
+            <div class="topics-grid">
+                <article class="topic-card">
+                    <a href="#">
+                        <div class="card-image">IMAGE</div>
+                        <div class="card-content">
+                            <span class="tags">#EVENT #MUSIC</span>
+                            <h3 class="card-title">New Event Announcement</h3>
+                        </div>
+                    </a>
+                </article>
+                <article class="topic-card">
+                    <a href="#">
+                        <div class="card-image">IMAGE</div>
+                        <div class="card-content">
+                            <span class="tags">#RELEASE</span>
+                            <h3 class="card-title">New Track Release Info</h3>
+                        </div>
+                    </a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">CONTACT US</a>
+        
+        </div>
+        <div class="copyright">
+            &copy; 2025 Oshiribeat. All rights reserved.
+        </div>
+    </footer>
+    
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('#primary-navigation');
+
+        menuToggle.addEventListener('click', () => {
+            // aria-expanded属性を切り替える (アクセシビリティ対応)
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+            
+            // is-openクラスを付け外ししてメニューの表示/非表示を切り替える
+            navMenu.classList.toggle('is-open');
+        });
+    </script>
+
+</body>
+</html>
