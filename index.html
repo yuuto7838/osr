@@ -1,453 +1,502 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oshiribeat</title>
-    <link rel="icon" type="img/favicon.png" href="img/favicon.png">
-    <style>
-        /* --- 基本設定 --- */
-        :root {
-            /* 画像の背景色に合わせる */
-            --bg-color: #e8e8e8;
-            --text-color: #111;
-            /* 画像のアクセントカラー */
-            --accent-color: #aaff00;
-            --font-main: 'Helvetica Neue', Arial, sans-serif;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oshiribeat — Multi Genres Creator Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===== Oshiribeat brand tokens (from "Oshiribeat ブランドガイドライン") ===== */
+:root{
+  --ground:#E8E8E8; --ground-raised:#F5F5F5; --paper:#FFFFFF;
+  --ink:#000000; --ink-soft:#1D1E1B; --ink-muted:#4A4A4A; --hairline:#5C5C5C;
+  --lime:#AAFF00; --on-lime:#000000;
+  --font-display:"Unbounded","Archivo Expanded","Arial Black",sans-serif;
+  --font-sans:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  --stroke-hair:1.5px; --stroke-outline:2.5px; --stroke-orbit:3px;
+  --space-1:4px; --space-2:8px; --space-4:16px; --space-6:24px; --space-10:40px; --space-16:64px; --space-24:96px;
+  --wrap:1200px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font-sans);font-weight:500;font-size:15px;line-height:1.8;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img,svg{display:block}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--space-6)}
+.display{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;line-height:.9}
+.label{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:.02em;line-height:1.2;text-transform:uppercase}
+.muted{color:var(--ink-muted)}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* motif helpers */
+.m-lime{fill:var(--lime);stroke:var(--ink);stroke-width:var(--stroke-outline);stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.m-paper{fill:var(--paper);stroke:var(--ink);stroke-width:var(--stroke-outline);stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.m-soft{fill:var(--ink-soft)}
+.m-hair{fill:none;stroke:var(--hairline);stroke-width:var(--stroke-hair);vector-effect:non-scaling-stroke;stroke-linecap:round}
+.m-orbit{fill:none;stroke:var(--paper);stroke-width:var(--stroke-orbit);vector-effect:non-scaling-stroke}
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-main);
-            font-weight: bold;
-            overflow-x: hidden;
-        }
+/* ===== header ===== */
+header{position:sticky;top:0;z-index:20;background:var(--ground-raised)}
+.hd{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand img{height:28px;width:auto}
+.brand .wm{height:18px}
+nav ul{display:flex;gap:var(--space-6);list-style:none;margin:0;padding:0}
+nav a{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:.04em;text-decoration:none;padding:6px 0;border-bottom:var(--stroke-outline) solid transparent}
+nav a:hover,nav a.on{border-color:var(--ink)}
+.burger{display:none;background:none;border:0;padding:8px;cursor:pointer}
+.burger i{display:block;width:24px;height:2.5px;background:var(--ink);margin:5px 0;transition:.2s}
+@media (max-width:760px){
+  .burger{display:block}
+  nav{position:fixed;inset:64px 0 auto 0;background:var(--ground-raised);transform:translateY(-120%);transition:transform .3s;z-index:-1}
+  nav.open{transform:none}
+  nav ul{flex-direction:column;gap:0;padding:var(--space-4) var(--space-6) var(--space-10)}
+  nav a{display:block;font-size:28px;font-weight:800;padding:12px 0;border:0}
+  .burger.x i:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+  .burger.x i:nth-child(2){opacity:0}
+  .burger.x i:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+}
 
-        a {
-            text-decoration: none;
-            color: inherit;
-            transition: color 0.3s;
-        }
+/* ===== hero (KV) ===== */
+.kv{position:relative;height:calc(100vh - 64px);height:calc(100svh - 64px);min-height:320px;overflow:hidden}
+.kv .mo{position:absolute;pointer-events:none}
+.kv .lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);width:min(94vw,calc((100svh - 64px) * 1.3),1500px);aspect-ratio:1180/560;container-type:inline-size}
+.kv .lock svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.kv .lock .name{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.kv .lock h1{margin:0;line-height:0;width:72%}
+.kv .lock .kv-wm{width:100%;height:auto}
+.kv .lock p{margin:2.2cqw 0 0;font-size:max(10px,1.75cqw)}
+.kv .scroll{position:absolute;left:50%;bottom:var(--space-6);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px}
+.kv .scroll span{width:1.5px;height:40px;background:var(--ink);animation:drop 1.6s ease-in-out infinite;transform-origin:top}
+@keyframes drop{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+@media (orientation:portrait){.kv .sq{display:none}}
+@media (max-height:520px){.kv .scroll{display:none}}
+.float{animation:float 6s ease-in-out infinite}
+.spin{animation:spin 30s linear infinite}
+.beat{animation:beat .46875s cubic-bezier(.2,.8,.3,1) infinite}
+@keyframes float{50%{transform:translateY(-12px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes beat{0%{transform:scale(1.06)}100%{transform:scale(1)}}
+.spin,.beat,.float{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:reduce){.float,.spin,.beat,.kv .scroll span{animation:none}}
 
-        a:hover {
-            color: var(--accent-color);
-        }
+/* ===== sections ===== */
+section{padding:var(--space-24) 0;scroll-margin-top:64px}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-6);margin-bottom:var(--space-10);flex-wrap:wrap}
+.sh h2{margin:0;font-size:clamp(40px,7vw,72px)}
+.sh .ja{font-family:var(--font-sans);font-weight:700;font-size:14px;letter-spacing:.08em;color:var(--ink-muted);margin-top:var(--space-2)}
+.rule{height:var(--stroke-hair);background:var(--hairline);opacity:.6;border:0;margin:0}
 
-        ul {
-            list-style: none;
-        }
+/* pills (filters / tags) */
+.pills{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.pill{font-family:var(--font-display);font-weight:700;font-size:11px;letter-spacing:.04em;border:var(--stroke-outline) solid var(--ink);border-radius:9999px;padding:6px 14px;background:transparent;color:var(--ink);cursor:pointer;line-height:1.2}
+.pill[aria-pressed="true"]{background:var(--lime)}
+.tag{font-family:var(--font-display);font-weight:700;font-size:10px;letter-spacing:.04em;border:var(--stroke-hair) solid var(--ink);border-radius:9999px;padding:3px 10px;line-height:1.2}
 
-        /* --- Header --- */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between; /* ロゴとメニュー/トグルを両端に寄せる */
-            align-items: center;
-            /* 背景を透明にして画像を活かす */
-            background: whitesmoke;
-            z-index: 1000;
-            /* ボーダーも削除 */
-            border-bottom: none;
-        }
+/* NEWS */
+.news-list{list-style:none;margin:0;padding:0}
+.news-list li{display:grid;grid-template-columns:120px 150px 1fr auto;gap:var(--space-6);align-items:center;padding:var(--space-6) 0;border-bottom:var(--stroke-hair) solid rgba(92,92,92,.6)}
+.news-list li:first-child{border-top:var(--stroke-hair) solid rgba(92,92,92,.6)}
+.news-list .thumb{width:120px;height:80px;background:var(--ground-raised);display:grid;place-items:center;overflow:hidden}
+.news-list .thumb svg{width:56px;height:56px}
+.news-list time{font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:.02em}
+.news-list h3{margin:0;font-size:17px;font-weight:700;line-height:1.5}
+.news-list .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.news-list .new{font-family:var(--font-display);font-weight:800;font-size:11px;background:var(--lime);border:var(--stroke-outline) solid var(--ink);border-radius:9999px;padding:4px 10px}
+@media (max-width:760px){
+  .news-list li{grid-template-columns:88px 1fr;gap:var(--space-4)}
+  .news-list .thumb{width:88px;height:64px;grid-row:span 2}
+  .news-list time{font-size:12px}
+  .news-list h3{font-size:15px}
+  .news-list .newcol{display:none}
+}
 
-        .logo {
-            font-size: 24px;
-            letter-spacing: 2px;
-            font-weight: 900;
-            /* ロゴ色を黒に */
-            color: #000;
-        }
+/* ABOUT */
+.about{background:var(--ground-raised);position:relative;overflow:hidden}
+.about .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:var(--space-16);align-items:start}
+.about .big{font-size:clamp(44px,7vw,96px);margin:0 0 var(--space-10)}
+.about .lead{font-size:clamp(16px,1.6vw,19px);line-height:2;font-weight:500;max-width:34em}
+.about .what{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-6)}
+dl.org{margin:0;display:grid;grid-template-columns:150px 1fr}
+dl.org dt,dl.org dd{margin:0;padding:var(--space-4) 0;border-bottom:var(--stroke-hair) solid rgba(92,92,92,.6)}
+dl.org dt{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:.04em;padding-top:calc(var(--space-4) + 4px)}
+dl.org dd{font-weight:700}
+dl.org dd small{display:block;font-weight:500;color:var(--ink-muted)}
+.about .flower{position:absolute;width:300px;right:-90px;bottom:-110px}
+@media (max-width:860px){.about .grid{grid-template-columns:1fr;gap:var(--space-10)}dl.org{grid-template-columns:120px 1fr}}
 
-        .nav-menu {
-            display: flex;
-            /* PC表示では幅は自動 */
-        }
+/* MEMBER */
+.members{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:var(--stroke-hair) solid rgba(92,92,92,.6)}
+.member{appearance:none;background:none;border:0;border-bottom:var(--stroke-hair) solid rgba(92,92,92,.6);font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%;padding:var(--space-6) var(--space-4) var(--space-6) 0;border-bottom:var(--stroke-hair) solid rgba(92,92,92,.6);display:flex;gap:var(--space-4);align-items:center;min-width:0}
+.member .av{flex:none;width:64px;height:64px;border-radius:9999px;overflow:hidden;border:var(--stroke-outline) solid var(--ink);background:var(--paper);transition:transform .25s cubic-bezier(.2,.8,.3,1.4)}
+.member .av img{width:100%;height:100%;object-fit:cover;display:block}
+.member:hover .av,.member:focus-visible .av{transform:scale(1.08) rotate(-4deg)}
+.member:hover .nm{text-decoration:underline;text-decoration-thickness:2.5px;text-underline-offset:4px}
+.member:focus-visible{outline:var(--stroke-outline) solid var(--ink);outline-offset:4px}
+.member .more{margin-left:auto;flex:none;width:22px;height:22px;opacity:0;transition:opacity .2s}
+.member:hover .more,.member:focus-visible .more{opacity:1}
+/* modal */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:var(--space-6);background:rgba(29,30,27,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+.modal.open{opacity:1;pointer-events:auto}
+.modal .card{position:relative;width:min(720px,100%);max-height:calc(100vh - 48px);overflow:auto;background:var(--ground);border:var(--stroke-outline) solid var(--ink);display:grid;grid-template-columns:260px 1fr;transform:translateY(24px) scale(.98);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.modal.open .card{transform:none}
+.modal .ph{position:relative;background:var(--paper);border-right:var(--stroke-outline) solid var(--ink);min-height:260px;align-self:stretch}
+.modal .ph img{position:absolute;inset:0}
+.modal .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.modal .ph svg{position:absolute;width:64px;right:-30px;top:-26px}
+.modal .bd{padding:var(--space-10) var(--space-10) var(--space-10) var(--space-10);display:flex;flex-direction:column;gap:var(--space-4)}
+.modal .no{font-family:var(--font-display);font-weight:700;font-size:12px;color:var(--ink-muted);letter-spacing:.04em}
+.modal h3{margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;line-height:1}
+.modal h3.jp{font-family:var(--font-sans);font-weight:900}
+.modal .bio{margin:0;font-size:15px;line-height:1.9;white-space:pre-line}
+.modal .bio:empty{display:none}
+.modal .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:var(--space-4)}
+.modal .close{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:9999px;border:var(--stroke-outline) solid var(--ink);background:var(--paper);cursor:pointer;display:grid;place-items:center}
+.modal .close svg{width:18px;height:18px}
+.modal .nav{display:flex;gap:8px}
+.modal .nav button{width:44px;height:44px;border-radius:9999px;border:var(--stroke-outline) solid var(--ink);background:transparent;cursor:pointer;font-family:var(--font-display);font-weight:800;font-size:16px}
+@media (max-width:640px){.modal .card{grid-template-columns:1fr}.modal .ph{border-right:0;border-bottom:var(--stroke-outline) solid var(--ink);min-height:0;height:240px}.modal .bd{padding:var(--space-6)}}
+body.lock{overflow:hidden}
+.member .nm{font-family:var(--font-display);font-weight:800;font-size:17px;letter-spacing:-.01em;line-height:1.15;word-break:break-word}
+.member .nm.jp{font-family:var(--font-sans);font-weight:900}
+.member .rl{font-family:var(--font-display);font-weight:700;font-size:10px;letter-spacing:.06em;color:var(--ink-muted);margin-top:6px;display:flex;gap:10px;align-items:center}
+.member .rl a{color:var(--ink);text-decoration:none;border-bottom:var(--stroke-hair) solid var(--ink);line-height:1.1}
+.member[hidden]{display:none}
+@media (max-width:1000px){.members{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:760px){.members{grid-template-columns:repeat(2,1fr)}.member{gap:10px}.member .av{width:48px;height:48px}.member .nm{font-size:14px}.member .more{display:none}}
+.count{font-family:var(--font-display);font-weight:800;font-size:15px}
 
-        .nav-menu li {
-            font-size: 14px;
-            letter-spacing: 1px;
-            margin-left: 30px; /* PCでの項目間の間隔 */
-        }
+/* CONTACT */
+.contact .box{position:relative;border:var(--stroke-outline) solid var(--ink);background:var(--paper);padding:var(--space-16) var(--space-10);display:grid;grid-template-columns:1.2fr 1fr;gap:var(--space-10);overflow:hidden}
+.contact .mail{font-family:var(--font-display);font-weight:800;font-size:clamp(20px,3.4vw,40px);letter-spacing:-.02em;word-break:break-all;margin:var(--space-2) 0 var(--space-6);display:block;text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:13px;letter-spacing:.04em;border:var(--stroke-outline) solid var(--ink);border-radius:9999px;padding:14px 26px;background:var(--lime);color:var(--on-lime);cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent}
+.btn:active{transform:translateY(1px)}
+.contact ul{margin:0;padding:0;list-style:none}
+.contact li{padding:10px 0;border-bottom:var(--stroke-hair) solid rgba(92,92,92,.6);font-weight:700;display:flex;gap:10px;align-items:center}
+.contact li svg{width:16px;height:16px;flex:none}
+.contact .note{font-size:13px;color:var(--ink-muted);margin-top:var(--space-6);line-height:1.8}
+.contact .burst{position:absolute;width:160px;right:-50px;top:-50px}
+@media (max-width:860px){.contact .box{grid-template-columns:1fr;padding:var(--space-10) var(--space-6)}}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--ink);color:var(--paper);font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:.04em;padding:12px 20px;border-radius:9999px;transition:transform .3s;z-index:50}
+.toast.show{transform:translate(-50%,0)}
 
-        .nav-menu li a {
-            /* ナビゲーションの文字色を黒に */
-            color: #000;
-        }
-        
-        /* --- ハンバーガーアイコン (PCでは非表示) --- */
-        .menu-toggle {
-            display: none; /* デフォルトで非表示 */
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            z-index: 1001; /* ヘッダーより上に配置 */
-        }
+/* footer */
+footer{padding:var(--space-16) 0 var(--space-10)}
+.ft{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-6);flex-wrap:wrap}
+.ft .big{font-size:clamp(48px,12vw,150px);margin:0}
+.ft .links{display:flex;gap:var(--space-6);flex-wrap:wrap}
+.ft .links a{text-decoration:none;border-bottom:var(--stroke-hair) solid var(--ink)}
+.ft small{display:block;margin-top:var(--space-10);font-size:12px;color:var(--ink-muted)}
 
-        .hamburger-icon {
-            display: block;
-            width: 24px;
-            height: 3px;
-            background: #000;
-            position: relative;
-            transition: transform 0.3s;
-        }
-
-        .hamburger-icon::before,
-        .hamburger-icon::after {
-            content: '';
-            display: block;
-            width: 100%;
-            height: 3px;
-            background: #000;
-            position: absolute;
-            transition: transform 0.3s, top 0.3s;
-        }
-
-        .hamburger-icon::before {
-            top: -8px;
-        }
-
-        .hamburger-icon::after {
-            top: 8px;
-        }
-
-        /* メニュー開閉時のアイコンアニメーション */
-        .menu-toggle[aria-expanded="true"] .hamburger-icon {
-            transform: rotate(45deg);
-            background: transparent;
-        }
-
-        .menu-toggle[aria-expanded="true"] .hamburger-icon::before {
-            transform: rotate(90deg);
-            top: 0;
-        }
-
-        .menu-toggle[aria-expanded="true"] .hamburger-icon::after {
-            transform: rotate(0deg);
-            top: 0;
-        }
-
-
-       /* --- Hero Section (画像表示エリア) --- */
-        .hero {
-            height: 100vh; /* 画面いっぱいの高さ */
-            width: 100%;
-            position: relative;
-            
-            /* ▼▼▼ デフォルト（PC/タブレット横向き）の画像設定 ▼▼▼ */
-            /* 画像ファイルを指定 */
-            background-image: url('img/kv.webp');
-            
-            /* 画像を繰り返し表示しない */
-            background-repeat: no-repeat;
-            
-            /* 画面の中央に配置 */
-            background-position: center;
-            
-            /* 画像のサイズ調整 */
-            background-size: 100% auto;
-            
-            /* 背景色（画像の余白部分の色）*/
-            background-color: #e8e8e8;
-        }
-        
-        /* --- Section 共通 --- */
-        section:not(.hero) {
-            padding: 80px 40px;
-            background-color: #fff; /* コンテンツエリアの背景を白に */
-        }
-
-        .section-title {
-            font-size: 36px;
-            margin-bottom: 40px;
-            border-left: 5px solid var(--accent-color);
-            padding-left: 20px;
-            text-transform: uppercase;
-            color: #000;
-        }
-
-        /* ------------------------------------- */
-        /* ★ 新規追加: グリッドレイアウトセクション */
-        /* ------------------------------------- */
-        #grid-features {
-            /* 全画面幅を使用するためパディングをゼロに設定 */
-            padding: 0;
-        }
-
-        .grid-container {
-            display: grid;
-            /* 2列のグリッドを作成し、それぞれの列が等しい幅になるようにする */
-            grid-template-columns: 1fr 1fr;
-            /* グリッド間の隙間をなくす */
-            gap: 0;
-            width: 100%;
-        }
-
-        .grid-item {
-            position: relative;
-            /* 高さを狭くする（縦横比を1:0.6に） */
-            padding-top: 60%; 
-            overflow: hidden;
-            background-color: #333; /* 画像がない場合の背景色 */
-        }
-        
-        /* 画像とテキストを配置するためのインナー */
-        .grid-inner {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            
-            /* 背景画像の設定 */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            
-            /* テキストを中央に配置するためのFlexbox */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            
-            /* ホバーエフェクト用 */
-            transition: transform 0.3s ease-out;
-        }
-        
-        .grid-item a:hover .grid-inner {
-            transform: scale(1.03); /* ホバーで少し拡大 */
-        }
-
-        .grid-text {
-            color: #fff;
-            font-size: 2vw; /* 画面幅に応じてサイズを調整 */
-            padding: 20px;
-            line-height: 1.2;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7); /* テキストを読みやすくする影 */
-            z-index: 2;
-        }
-        
-        /* 特定のアイテムに固有の背景を設定 (例として画像を差し込みます) */
-        .item-1 .grid-inner {
-            background-image: url('img/VER06961.webp'); 
-            background-color: #e8e8e8; /* ZEN AIMのような背景色 */
-        }
-        
-        .item-2 .grid-inner {
-            background-image: url('img/ZSH06095.webp'); 
-            /* 画像が暗いので、文字色を白にします */
-            color: #fff;
-        }
-        
-        .item-3 .grid-inner {
-            background-image: url('img/ZSH06155.webp'); 
-            color: #fff;
-        }
-        
-        .item-4 .grid-inner {
-            background-image: url('img/ZSH06215.webp'); 
-            color: #fff;
-        }
-
-        .item-5 .grid-inner {
-            background-image: url('img/ZSH06280.webp'); 
-            color: #fff;
-        }
-
-        .item-6 .grid-inner {
-            background-image: url('img/VER07173.webp'); 
-            color: #fff;
-        }
-
-        /* --- Footer --- */
-        footer {
-            background: #111;
-            color: #fff;
-            padding: 60px 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            font-size: 14px;
-        }
-
-        .copyright {
-            color: #888;
-            font-size: 12px;
-            margin-top: 20px;
-        }
-
-        /* --- スマホ向け調整 --- */
-        @media (max-width: 768px) {
-            
-            header { 
-                padding: 20px;
-            }
-            
-            /* ハンバーガーアイコンを表示 */
-            .menu-toggle {
-                display: block;
-                margin-left: auto; 
-            }
-            
-            section:not(.hero) { padding: 60px 20px; }
-
-            /* ナビゲーションメニュー本体の設定 */
-            .nav-menu {
-                display: flex;
-                flex-direction: column;
-                position: fixed; 
-                top: 80px; 
-                left: 0;
-                width: 100%;
-                height: calc(100vh - 80px); 
-                background: #fff; 
-                transform: translateX(100%); 
-                transition: transform 0.3s ease-out;
-                overflow-y: auto; 
-                z-index: 999;
-            }
-
-            .nav-menu.is-open {
-                transform: translateX(0);
-            }
-            
-            /* SP向け：グリッドを縦に並べる（1列表示）*/
-            .grid-container {
-                 grid-template-columns: 1fr;
-            }
-            
-            .grid-text {
-                font-size: 5vw; /* SPでは文字を大きく */
-            }
-            
-        }
-        
-        /* --- Hero Section (画像表示エリア) のスマートフォン縦画面向け調整 --- */
-        @media (max-width: 768px) and (orientation: portrait) {
-            .hero {
-                background-image: url('img/kv-sp.webp');
-                background-size: contain;
-                background-position: center top;
-                background-color: #e8e8e8;
-            }
-        }
-    </style>
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-            <img src="img/logo.png" alt="Oshiribeat ロゴ" style="height:40px; vertical-align:middle;">
+<!-- motif library (re-traced from the brand guideline's Motifs) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="p-sparkle" d="M50 0 C53 30 70 47 100 50 C70 53 53 70 50 100 C47 70 30 53 0 50 C30 47 47 30 50 0Z"/>
+    <path id="p-emblem" d="M305 0 Q636 184 1160 142 Q759 302 865 540 Q504 358 0 397 Q381 240 305 0Z"/>
+    <path id="p-cross" d="M22 22 L78 78 M78 22 L22 78"/>
+  </defs>
+</svg>
+
+<header>
+  <div class="wrap hd">
+    <a class="brand" href="#top" aria-label="Oshiribeat トップへ">
+      <img src="img/logo-mark.png" alt="" width="28" height="28">
+      <img src="img/logo-wordmark.png" alt="Oshiribeat" class="wm" width="128" height="18">
+    </a>
+    <button class="burger" aria-label="メニュー" aria-expanded="false"><i></i><i></i><i></i></button>
+    <nav>
+      <ul>
+        <li><a href="#top">TOP</a></li>
+        <li><a href="#news">NEWS</a></li>
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#member">MEMBER</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ===== KV ===== -->
+<div class="kv" id="top">
+  <!-- motifs around the lockup; cut at the edges, diagonal balance -->
+  <svg class="mo float" style="width:32vmax;left:-8vw;top:-6%" viewBox="0 0 200 200" aria-hidden="true"><path class="m-paper spin" id="cloud1"/></svg>
+  <svg class="mo" style="width:26vmax;right:-6vw;bottom:-8%" viewBox="0 0 200 200" aria-hidden="true"><path class="m-lime spin flowerP"/><circle cx="100" cy="100" r="16" class="m-hair" style="stroke:#000;stroke-width:2.5px"/></svg>
+  <svg class="mo" style="width:15vmax;left:4vw;bottom:6%" viewBox="0 0 200 200" aria-hidden="true"><path class="m-soft spin burstP"/></svg>
+  <svg class="mo" style="width:14vmax;right:10vw;top:10%" viewBox="0 0 200 200" aria-hidden="true"><path class="m-hair cloudOutline"/></svg>
+  <svg class="mo" style="width:9vmax;left:22vw;top:12%" viewBox="0 0 200 200" aria-hidden="true"><g class="m-hair radialG spin"></g></svg>
+  <svg class="mo float" style="width:5vmax;right:26vw;top:22%;animation-delay:-2s" viewBox="0 0 100 100" aria-hidden="true"><use href="#p-sparkle" class="m-lime"/></svg>
+  <svg class="mo float" style="width:3.6vmax;left:30vw;bottom:20%;animation-delay:-4s" viewBox="0 0 100 100" aria-hidden="true"><use href="#p-sparkle" class="m-paper"/></svg>
+  <svg class="mo" style="width:2.4vmax;right:34vw;bottom:14%" viewBox="0 0 100 100" aria-hidden="true"><use href="#p-cross" stroke="#1D1E1B" stroke-width="22" stroke-linecap="round"/></svg>
+  <svg class="mo" style="width:1.8vmax;left:12vw;top:44%" viewBox="0 0 100 100" aria-hidden="true"><use href="#p-cross" stroke="#1D1E1B" stroke-width="22" stroke-linecap="round"/></svg>
+  <svg class="mo sq" style="width:16vmax;right:20vw;bottom:9%" viewBox="0 0 180 50" aria-hidden="true"><path class="m-hair squiggleP"/></svg>
+
+  <!-- KV lockup: emblem star + orbit + name.
+       ※ ワードマークは公式ロゴデータが届き次第 <img> に差し替える（ガイドライン「ロゴを書体で打ち直さない」） -->
+  <div class="lock">
+    <svg viewBox="-10 -10 1180 560" aria-hidden="true">
+      <g class="beat"><use href="#p-emblem" class="m-lime"/></g>
+      <g transform="translate(580 270)">
+        <ellipse rx="560" ry="250" class="m-orbit"/>
+        <ellipse rx="575" ry="185" class="m-orbit" transform="rotate(-14)"/>
+      </g>
+    </svg>
+    <div class="name">
+      <h1><img src="img/logo-wordmark.png" alt="Oshiribeat" class="kv-wm"></h1>
+      <p class="label">Multi Genres Creator Group</p>
+    </div>
+  </div>
+  <div class="scroll label" aria-hidden="true">Scroll<span></span></div>
+</div>
+
+<!-- ===== NEWS ===== -->
+<section id="news">
+  <div class="wrap">
+    <div class="sh rv">
+      <div><h2 class="display">News</h2><div class="ja">ニュース</div></div>
+      <div class="pills" role="group" aria-label="タグで絞り込み" id="newsFilter"></div>
+    </div>
+    <ul class="news-list" id="newsList"></ul>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about" class="about">
+  <div class="wrap grid">
+    <div class="rv">
+      <div class="label muted" style="margin-bottom:var(--space-4)">About Us</div>
+      <h2 class="display big">Jump<br>across<br>the genre.</h2>
+      <p class="lead">Oshiribeatは、東京とソウルをベースとした、音楽で新しいエンターテインメント体験を創造するクリエイティブ集団です。既存の枠組みにとらわれず、多様なカルチャー、アートの要素を取り入れ、デジタルとリアルの境界を超えた活動を展開しています。</p>
+      <div class="what">
+        <span class="tag">MUSIC</span><span class="tag">ILLUSTRATION</span><span class="tag">DESIGN</span><span class="tag">MOVIE</span><span class="tag">MASTERING</span><span class="tag">GAMING</span><span class="tag">DJ</span>
+      </div>
+    </div>
+    <div class="rv">
+      <dl class="org">
+        <dt>NAME</dt><dd>Oshiribeat<small>オシリビート</small></dd>
+        <dt>FOUNDED</dt><dd>2017.10.01</dd>
+        <dt>LOCATION</dt><dd>Tokyo, Japan<br>Seoul, Korea</dd>
+        <dt>PROJECT</dt><dd>楽曲制作<br>DJイベント開催<br>レーベル運営</dd>
+        <dt>REPRESENTATIVE</dt><dd>Norts</dd>
+        <dt>MEMBERS</dt><dd><span id="memCount">16</span> creators</dd>
+      </dl>
+    </div>
+  </div>
+  <svg class="flower" viewBox="0 0 200 200" aria-hidden="true"><path class="m-lime spin flowerP"/></svg>
+</section>
+
+<!-- ===== MEMBER ===== -->
+<section id="member">
+  <div class="wrap">
+    <div class="sh rv">
+      <div><h2 class="display">Members</h2><div class="ja">メンバー</div></div>
+      <div class="pills" role="group" aria-label="役割で絞り込み" id="memFilter"></div>
+    </div>
+    <div class="members" id="memList"></div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" class="contact">
+  <div class="wrap">
+    <div class="sh rv"><div><h2 class="display">Contact</h2><div class="ja">お問い合わせ</div></div></div>
+    <div class="box rv">
+      <svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><path class="m-soft spin burstP"/></svg>
+      <div>
+        <div class="label muted">E-mail Address</div>
+        <a class="mail" href="mailto:oshiribeat@gmail.com">oshiribeat@gmail.com</a>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn" id="copyMail" type="button">
+            <svg width="16" height="16" viewBox="0 0 100 100" aria-hidden="true"><use href="#p-sparkle" fill="#000"/></svg>アドレスをコピー
+          </button>
+          <a class="btn ghost" href="https://x.com/Oshiribeat">X で連絡する</a>
         </div>
-        
-        <button class="menu-toggle" aria-expanded="false" aria-controls="primary-navigation">
-            <span class="hamburger-icon"></span>
-        </button>
+        <p class="note">お問い合わせ内容を確認のうえ、担当者よりご連絡いたします。<br>返信までにお時間をいただく場合がございますので、あらかじめご了承ください。</p>
+      </div>
+      <div>
+        <div class="label muted" style="margin-bottom:var(--space-2)">お問い合わせ内容</div>
+        <ul>
+          <li><svg viewBox="0 0 100 100"><use href="#p-sparkle" class="m-lime"/></svg>リリースについて</li>
+          <li><svg viewBox="0 0 100 100"><use href="#p-sparkle" class="m-lime"/></svg>楽曲制作のご依頼</li>
+          <li><svg viewBox="0 0 100 100"><use href="#p-sparkle" class="m-lime"/></svg>出演のご依頼</li>
+          <li><svg viewBox="0 0 100 100"><use href="#p-sparkle" class="m-lime"/></svg>協賛について</li>
+          <li><svg viewBox="0 0 100 100"><use href="#p-sparkle" class="m-lime"/></svg>その他のお問い合わせ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
 
-        <nav>
-            <ul class="nav-menu" id="primary-navigation">
-                <li><a href="index.html">TOP</a></li>
-                <li><a href="news.html">NEWS</a></li>
-                <li><a href="about.html">ABOUT</a></li>
-                <li><a href="member.html">MEMBER</a></li>
-                <li><a href="contact.html">CONTACT</a></li>
-            </ul>
-        </nav>
-    </header>
+<footer>
+  <div class="wrap">
+    <hr class="rule" style="margin-bottom:var(--space-16)">
+    <div class="ft">
+      <div>
+        <p class="big"><img src="img/logo-wordmark.png" alt="Oshiribeat" style="width:min(720px,80vw);height:auto"></p>
+        <div class="label" style="margin-top:var(--space-4)">Multi Genres Creator Group — Jump across the genre.</div>
+      </div>
+      <div class="links label">
+        <a href="https://x.com/Oshiribeat">X</a>
+        <a href="https://oshiribeats.bandcamp.com/">Bandcamp</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <small>© 2025 Oshiribeat. All rights reserved.</small>
+  </div>
+</footer>
 
-    <main>
-        <section class="hero">
-        </section>
+<div class="modal" id="memModal" role="dialog" aria-modal="true" aria-labelledby="memName" aria-hidden="true">
+  <div class="card">
+    <div class="ph"><img src="" alt=""><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#p-sparkle" class="m-lime"/></svg></div>
+    <div class="bd">
+      <div class="no"></div>
+      <h3 id="memName"></h3>
+      <p class="bio"></p>
+      <div class="acts">
+        <a class="btn xlink" href="#">X</a>
+        <div class="nav" style="margin-left:auto"><button type="button" class="prev" aria-label="前のメンバー">←</button><button type="button" class="next" aria-label="次のメンバー">→</button></div>
+      </div>
+    </div>
+    <button type="button" class="close" aria-label="閉じる"><svg viewBox="0 0 100 100"><path d="M22 22 L78 78 M78 22 L22 78" stroke="#000" stroke-width="12" stroke-linecap="round"/></svg></button>
+  </div>
+</div>
 
-        <section id="grid-features">
-            <div class="grid-container">
-                
-                <div class="grid-item item-1">
-                        <div class="grid-inner">
-                            <span class="grid-text"></span>
-                        </div>
-                    </a>
-                </div>
-                
-                <div class="grid-item item-2">
-                        <div class="grid-inner">
-                            <span class="grid-text"></span>
-                        </div>
-                    </a>
-                </div>
-                
-                <div class="grid-item item-3">
-                        <div class="grid-inner">
-                            <span class="grid-text"></span>
-                        </div>
-                    </a>
-                </div>
-                
-                <div class="grid-item item-4">
-                        <div class="grid-inner">
-                            <span class="grid-text"></span>
-                        </div>
-                    </a>
-                </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-                 <div class="grid-item item-5">
-                        <div class="grid-inner">
-                            <span class="grid-text"></span>
-                        </div>
-                    </a>
-                </div>
+<script>
+/* ---------- motif paths (generated) ---------- */
+function flowerD(r=96,c=100){let d='';for(let i=0;i<=360;i+=2){const a=i/180*Math.PI,rr=r*(0.74+0.26*Math.abs(Math.cos(a*4)));d+=(i?'L':'M')+(c+Math.cos(a)*rr).toFixed(1)+' '+(c+Math.sin(a)*rr).toFixed(1)+' ';}return d+'Z';}
+function cloudD(n=10,r=96,c=100){let d='';for(let i=0;i<n;i++){const a0=i/n*2*Math.PI,a1=(i+1)/n*2*Math.PI,am=(a0+a1)/2;
+  const p=(a,k)=>[(c+Math.cos(a)*r*k).toFixed(1),(c+Math.sin(a)*r*k).toFixed(1)];
+  if(!i)d+='M'+p(a0,.8).join(' ');d+=' Q'+p(am,1.15).join(' ')+' '+p(a1,.8).join(' ');}return d+'Z';}
+function burstD(N=24,r=98,c=100){let d='';for(let i=0;i<N*2;i++){const a=i/(N*2)*2*Math.PI-Math.PI/2,rr=i%2?r*.6:r;d+=(i?'L':'M')+(c+Math.cos(a)*rr).toFixed(1)+' '+(c+Math.sin(a)*rr).toFixed(1)+' ';}return d+'Z';}
+function squigD(){let d='';for(let x=4;x<=176;x+=2){d+=(x===4?'M':'L')+x+' '+(25+Math.sin((x-4)/172*Math.PI*8)*16).toFixed(1)+' ';}return d;}
+document.querySelectorAll('.flowerP').forEach(e=>e.setAttribute('d',flowerD()));
+document.querySelectorAll('.burstP').forEach(e=>e.setAttribute('d',burstD()));
+document.getElementById('cloud1').setAttribute('d',cloudD(10));
+document.querySelectorAll('.cloudOutline').forEach(e=>e.setAttribute('d',cloudD(6)));
+document.querySelectorAll('.squiggleP').forEach(e=>e.setAttribute('d',squigD()));
+document.querySelectorAll('.radialG').forEach(g=>{for(let i=0;i<8;i++){const a=i/8*2*Math.PI,l=document.createElementNS('http://www.w3.org/2000/svg','line');
+  l.setAttribute('x1',100+Math.cos(a)*18);l.setAttribute('y1',100+Math.sin(a)*18);l.setAttribute('x2',100+Math.cos(a)*95);l.setAttribute('y2',100+Math.sin(a)*95);g.appendChild(l);}});
 
-                 <div class="grid-item item-6">
-                        <div class="grid-inner">
-                            <span class="grid-text"></span>
-                        </div>
-                    </a>
-                </div>
-                
-            </div>
-        </section>
-        </main>
+/* ---------- data (crawled from oshiribeat.com) ---------- */
+const NEWS=[
+  {d:'2026.10.25',tags:['INFO','M3'],t:'2026年秋M3でMulti Flavor 5をリリース'},
+  {d:'2025.11.04',tags:['INFO','加入'],t:'OshiribeatにRaimukunが加入'},
+  {d:'2025.10.19',tags:['INFO','M3'],t:'2025年秋M3でMulti Flavor 4とArtifactを頒布'},
+  {d:'2025.04.27',tags:['INFO','EVENT'],t:'Oshiribeat初の海外公演 OSR in Seoul 開催決定'},
+  {d:'2024.10.20',tags:['INFO','M3'],t:'2024年秋M3でMulti Flavor 3を頒布'},
+  {d:'2024.04.20',tags:['INFO','加入'],t:'OshiribeatにA-byssとCHUYOが加入'},
+  {d:'2024.04.20',tags:['INFO','M3'],t:'2024年春M3 #ffffff Records様と共同出展'},
+  {d:'2023.12.13',tags:['RELEASE','MUSIC','COLLAB'],t:'Sixtar Gate: Startrail Oshiribeatコラボ発売！'},
+  {d:'2022.11.18',tags:['RELEASE','MUSIC','COLLAB'],t:'Phigros Oshiribeatコラボ発表！'}
+];
+/* [name, role, X id, icon, bio] — bio は既存サイト(member.html)の紹介文 */
+const MEMBERS=[
+  ['K-forest','Composer','Kforest34','kforest',"2017年より活動を開始。主にUK HardcoreやHard Danceといったアップテンポでエネルギッシュなハードコア・ダンスミュージックの楽曲制作を得意としている。\n\n音楽ゲームから強い影響を受けた独自の感性で、パワフルなビートと心に響くエモーショナルなメロディを融合させた、スタイリッシュなトラックを生み出している。"],['Plastic Fruits','Composer','plasticfruits','plasticfruits',"日本のクラブミュージックシーンで活動するサウンドクリエイター。Hardcore、Dubstep、Garage、Future Bassなど、ジャンルレスでボーダレスなダンスミュージックを制作している。\n\nエネルギッシュなビートの中にも、自身の特徴であるメロディアスなピアノサウンドや、フィーチャリングボーカリストの個性を最大限に引き出す、叙情的かつスタイリッシュな音作りを得意とする。"],['MASEraaaN','Composer','','noimage',"エモーショナルと破壊力を両立させるハードコア・サウンドクリエイター\n\n主にHardcore、Freeform Hardcoreを制作するトラックメーカー兼DJ。日本のハードコアテクノシーンを中心に活動している。他レーベルへの楽曲提供多数"],
+  ['ど～ぱみん','Composer','DTM_dopamine','dopamine',"ベースミュージックとエレクトロスウィングを軸に、多様な世界観を創造するサウンドクリエイター\n\n2019年より活動を開始。中毒性のあるベースミュージックと華やかなエレクトロスウィングを基盤に、ボーカロイド楽曲やゲーム音楽など、ジャンルを問わず意欲的に楽曲制作を手がけている。"],['Roy Mikelate','Composer','latte_milk','roy',"ジャンルレスな探求心を持つメインストリームハードコアコンポーザー。\n\n国内外のダンスミュージックシーン、特に音楽ゲーム界隈で活動するサウンドクリエイター。特定のジャンルに縛られず、様々なスタイルの楽曲制作を手がけるマルチジャンルなアプローチを特徴としている。"],['Essbee','Composer','Essbee1203','essbee',"主にハードコア系のダンスミュージックを制作するサウンドクリエイター。特にGothic Hardcoreに分類される、荘厳でエモーショナルなサウンドスケープを創造する。\n\n楽曲は、パイプオルガンやクワイアといったクラシカルな要素と、激しいビートや複雑なリズムを融合させており、そのドラマチックで高難易度な曲調は、国内外の音楽ゲームで高い評価を得ている。"],
+  ['CHUYO','Composer','chuyomusic','chuyo',"日本と韓国のダンスミュージックシーンで活動するサウンドクリエイター兼DJ。GarageやHouseなど、踊れる音楽を主な制作ジャンルとしている。"],['A-byss','Composer','ABYSSSSS_ABYSS','abyss',"日本のクラブミュージックシーンで活動するサウンドクリエイター。Jersey ClubやHardcoreを中心にDJ活動も行っている。バイクに乗っている。ピアノが弾ける。"],['Raimukun','Composer','','raimukun',"音楽ゲーム界隈を中心に活動するサウンドクリエイター。独自の視点と感性で、生楽器をふんだんに使った壮大なテーマを音楽で表現する。"],
+  ['sayu','Singer','','noimage',"Oshiribeatのボーカリスト。"],['Chester Park','Engineer','SoySauceStudio','chester',"Oshiribeatのエンジニア兼作曲家。Oshiribeatリリースの全楽曲のマスタリングを担当してる。韓国同人音楽界隈の重鎮。"],['Koyuu (J.Kepler)','Engineer','Koyuu_twit','koyuu',"Oshiribeatのエンジニア兼作曲家。 サイトの改修やサーバー管理を担当するほか、M3で精力的に楽曲を発表している。日本に来るたびに江の島近辺にいる。"],
+  ['ろこ','Engineer','','noimage',"Oshiribeatのエンジニア。"],['tottoto','Designer','22_sono__','tottoto',"Oshiribeatのデザイナー。"],['Norts','Founder','DJ_Norts','norts',"Oshiribeatの設立者および代表。何でもお声がけください。"],['uta','Manager','uta_rv','uta',"Oshiribeatのマネージャー。猫が好き。"]
+];
 
-    <footer>
-        <div class="footer-links">
-            <a href="contact.html">CONTACT US</a>
-        
-        </div>
-        <div class="copyright">
-            &copy; 2025 Oshiribeat. All rights reserved.
-        </div>
-    </footer>
-    
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navMenu = document.querySelector('#primary-navigation');
-        
-        menuToggle.addEventListener('click', () => {
-            // aria-expanded属性を切り替える (アクセシビリティ対応)
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-            
-            // is-openクラスを付け外ししてメニューの表示/非表示を切り替える
-            navMenu.classList.toggle('is-open');
-        });
-    </script>
+/* thumbnails & avatars: motifs (remote images can't load here — swap for real artwork later) */
+const MOTIFS=[
+  '<svg viewBox="0 0 100 100"><use href="#p-sparkle" class="m-lime"/></svg>',
+  '<svg viewBox="0 0 200 200"><path class="m-paper" d="'+cloudD(10)+'"/></svg>',
+  '<svg viewBox="0 0 200 200"><path class="m-soft" d="'+burstD()+'"/></svg>',
+  '<svg viewBox="0 0 200 200"><path class="m-lime" d="'+flowerD()+'"/></svg>',
+  '<svg viewBox="0 0 100 100"><use href="#p-sparkle" class="m-paper"/></svg>',
+  '<svg viewBox="0 0 200 200"><path class="m-hair" style="stroke-width:2.5px" d="'+cloudD(6)+'"/></svg>'
+];
 
+/* NEWS render + filter */
+const nl=document.getElementById('newsList'),nf=document.getElementById('newsFilter');
+const ntags=['ALL',...new Set(NEWS.flatMap(n=>n.tags))];
+let nsel='ALL';
+function renderNews(){
+  nl.innerHTML=NEWS.filter(n=>nsel==='ALL'||n.tags.includes(nsel)).map((n,i)=>`
+    <li class="rv in">
+      <div class="thumb" aria-hidden="true">${MOTIFS[NEWS.indexOf(n)%MOTIFS.length]}</div>
+      <time datetime="${n.d.replace(/\./g,'-')}">${n.d}</time>
+      <div><h3>${n.t}</h3><div class="tags">${n.tags.map(t=>`<span class="tag">#${t}</span>`).join('')}</div></div>
+      <div class="newcol">${NEWS.indexOf(n)===0?'<span class="new">NEW</span>':''}</div>
+    </li>`).join('');
+}
+nf.innerHTML=ntags.map(t=>`<button class="pill" type="button" aria-pressed="${t==='ALL'}" data-t="${t}">${t==='ALL'?'ALL':'#'+t}</button>`).join('');
+nf.addEventListener('click',e=>{const b=e.target.closest('.pill');if(!b)return;nsel=b.dataset.t;nf.querySelectorAll('.pill').forEach(p=>p.setAttribute('aria-pressed',p===b));renderNews();});
+renderNews();
+
+/* MEMBER render + filter */
+const ml=document.getElementById('memList'),mf=document.getElementById('memFilter');
+const roles=['ALL',...new Set(MEMBERS.map(m=>m[1]))];
+const isJP=s=>/[ぁ-んァ-ン一-龥～]/.test(s);
+ml.innerHTML=MEMBERS.map((m,i)=>`
+  <button type="button" class="member rv" data-role="${m[1]}" data-i="${i}" aria-haspopup="dialog" aria-label="${m[0]} のプロフィールを見る">
+    <span class="av"><img src="img/${m[3]}.jpg" alt="" loading="lazy" width="64" height="64"></span>
+    <span style="min-width:0;display:block">
+      <span class="nm${isJP(m[0])?' jp':''}" style="display:block">${m[0]}</span>
+      <span class="rl">${m[1].toUpperCase()}</span>
+    </span>
+    <svg class="more" viewBox="0 0 100 100" aria-hidden="true"><use href="#p-sparkle" class="m-lime"/></svg>
+  </button>`).join('');
+document.getElementById('memCount').textContent=MEMBERS.length;
+mf.innerHTML=roles.map(r=>`<button class="pill" type="button" aria-pressed="${r==='ALL'}" data-r="${r}">${r.toUpperCase()}${r==='ALL'?` <span class="count">${MEMBERS.length}</span>`:''}</button>`).join('');
+mf.addEventListener('click',e=>{const b=e.target.closest('.pill');if(!b)return;const r=b.dataset.r;
+  mf.querySelectorAll('.pill').forEach(p=>p.setAttribute('aria-pressed',p===b));
+  ml.querySelectorAll('.member').forEach(el=>{el.hidden=!(r==='ALL'||el.dataset.role===r);});});
+
+/* member modal */
+const modal=document.getElementById('memModal');let cur=0,lastFocus=null;
+function visibleIdx(){return [...ml.querySelectorAll('.member:not([hidden])')].map(b=>+b.dataset.i);}
+function fillModal(i){cur=i;const m=MEMBERS[i];
+  modal.querySelector('.ph img').src=`img/${m[3]}.jpg`;modal.querySelector('.ph img').alt=m[0];
+  const h=modal.querySelector('h3');h.textContent=m[0];h.className=isJP(m[0])?'jp':'';
+  modal.querySelector('.no').textContent=String(i+1).padStart(2,'0')+' / '+m[1].toUpperCase();
+  modal.querySelector('.bio').textContent=m[4]||'';
+  const x=modal.querySelector('.xlink');if(m[2]){x.hidden=false;x.href='https://x.com/'+m[2];x.textContent='X  @'+m[2];}else x.hidden=true;}
+function openModal(i){lastFocus=document.activeElement;fillModal(i);modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('lock');modal.querySelector('.close').focus();}
+function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('lock');if(lastFocus)lastFocus.focus();}
+function step(d){const v=visibleIdx();const k=v.indexOf(cur);fillModal(v[(k+d+v.length)%v.length]);}
+ml.addEventListener('click',e=>{const b=e.target.closest('.member');if(b)openModal(+b.dataset.i);});
+modal.addEventListener('click',e=>{if(e.target===modal||e.target.closest('.close'))closeModal();});
+modal.querySelector('.prev').addEventListener('click',()=>step(-1));
+modal.querySelector('.next').addEventListener('click',()=>step(1));
+document.addEventListener('keydown',e=>{if(!modal.classList.contains('open'))return;
+  if(e.key==='Escape')closeModal();else if(e.key==='ArrowRight')step(1);else if(e.key==='ArrowLeft')step(-1);
+  else if(e.key==='Tab'){const f=[...modal.querySelectorAll('button,a:not([hidden])')];const a=f[0],z=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});
+
+/* nav: burger, active section */
+const burger=document.querySelector('.burger'),nav=document.querySelector('nav');
+burger.addEventListener('click',()=>{const o=nav.classList.toggle('open');burger.classList.toggle('x',o);burger.setAttribute('aria-expanded',o);});
+nav.addEventListener('click',e=>{if(e.target.tagName==='A'){nav.classList.remove('open');burger.classList.remove('x');burger.setAttribute('aria-expanded',false);}});
+const links=[...document.querySelectorAll('nav a')];
+const secIO=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id));}}),{rootMargin:'-45% 0px -50% 0px'});
+['top','news','about','member','contact'].forEach(id=>secIO.observe(document.getElementById(id)));
+
+/* reveal on scroll */
+const rvIO=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');rvIO.unobserve(en.target);}}),{threshold:.12});
+document.querySelectorAll('.rv:not(.in)').forEach(el=>rvIO.observe(el));
+
+/* copy e-mail */
+const toast=document.getElementById('toast');
+function showToast(m){toast.textContent=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000);}
+document.getElementById('copyMail').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText('oshiribeat@gmail.com');showToast('COPIED — oshiribeat@gmail.com');}
+  catch(e){showToast('コピーできませんでした。アドレスを選択してコピーしてください');}
+});
+</script>
 </body>
 </html>
